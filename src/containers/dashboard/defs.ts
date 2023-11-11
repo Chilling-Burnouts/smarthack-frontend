@@ -1,16 +1,9 @@
-export interface IPortfolioCompany {
-  id: string;
-  name: string;
+import { ICompany } from "../search-company/defs";
 
+export interface IPortfolioCompany extends ICompany {
   news?: string;
   riskLevel?: "low" | "medium" | "high";
 
-  details?: IPortfolioCompanyDetails;
-}
-
-export interface IPortfolioCompanyDetails {
-  naics2022: string;
-  main_country: string;
-  business_tags: string[];
-  long_description: string;
+  ticker?: string;
+  timeSeries?: Record<string, any>;
 }

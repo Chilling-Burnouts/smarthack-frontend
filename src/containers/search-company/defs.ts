@@ -1,6 +1,14 @@
 export interface ICompany {
-  id: string;
-
-  name: string;
-  description: string;
+  uuid: string;
+  long_description: string;
+  short_description: string;
+  company_name: string;
+  naics_2022: {
+    primary: {
+      code: string;
+      label: string;
+    };
+  };
+  business_tags: string[];
+  main_country_code: string;
 }

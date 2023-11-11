@@ -5,10 +5,14 @@ export interface IUser {
 }
 
 export const setUser = (user: IUser) => {
+  if (typeof window === "undefined") return;
+
   localStorage.setItem(LOCAL_STORAGE_TOKEN, JSON.stringify(user));
 };
 
 export const getUser = (): IUser | null => {
+  if (typeof window === "undefined") return null;
+
   const item = localStorage.getItem(LOCAL_STORAGE_TOKEN);
 
   if (!item) return null;

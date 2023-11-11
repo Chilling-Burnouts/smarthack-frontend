@@ -1,10 +1,69 @@
-import { Loader } from "@src/components/loader";
-import { usePortfolioState } from "@src/redux/portfolio";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-import { riskLevelColors, getRiskLevelColor } from "./utils";
+import { Loader } from "@src/components/loader";
+import { Modal } from "@src/components/modal";
+import { StockChart } from "@src/components/stock-chart";
+import {
+  selectCompany,
+  updateCompany,
+  usePortfolioState,
+} from "@src/redux/portfolio";
+import { useAppDispatch } from "@src/redux/store";
+
+import { IPortfolioCompany } from "./defs";
+import { getRiskLevelColor } from "./utils";
 
 export const Dashboard: React.FC = () => {
   const portfolioState = usePortfolioState();
+  const dispatch = useAppDispatch();
+
+  const [isStockGraphOpen, setIsStockGraphOpen] = useState(false);
+
+  const refetchCompany = async (company: IPortfolioCompany) => {
+    const responseTicker = await axios.get(
+      `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/ticker?company_name=${company.company_name}`
+    );
+
+    const ticker = responseTicker.data.ticker;
+
+    const responseTimeSeries = await axios.get(
+      `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/timeseries/daily?ticker=${ticker}`
+    );
+
+    const timeSeries = responseTimeSeries.data.timeseries;
+
+    dispatch(
+      updateCompany({
+        ...company,
+        ticker,
+        timeSeries,
+        news: "nu prea",
+        riskLevel: "low",
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (portfolioState.portfolio.length === 0) {
+      return;
+    }
+
+    refetchCompany(portfolioState.portfolio[0]);
+    // for (const company of portfolioState.portfolio) {
+    //   refetchCompany(company)
+    // }
+  }, [portfolioState.portfolio.length === 0]);
+
+  console.log(portfolioState.portfolio[0]);
+  console.log("^");
+
+  const onStockGraphOpen = (company: IPortfolioCompany) => {
+    setIsStockGraphOpen(true);
+    dispatch(selectCompany(company));
+  };
+
+  const onModalClose = () => dispatch(selectCompany(null));
 
   return (
     <div className="flex justify-center items-center">
@@ -22,17 +81,22 @@ export const Dashboard: React.FC = () => {
               </div>
             </li>
           )}
+
+          {Boolean(portfolioState.selectedCompany) && (
+            <Modal onClose={onModalClose}>
+              <StockChart
+                timeSeries={portfolioState.selectedCompany!.timeSeries!}
+              />
+            </Modal>
+          )}
+
           {portfolioState.portfolio.map((company, index) => {
             const isLoading = !company.news && !company.riskLevel;
 
             return (
               <li
                 key={index}
-                className={`relative flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden ${
-                  company.riskLevel
-                    ? riskLevelColors[company.riskLevel]
-                    : "bg-white"
-                }`}
+                className={`relative flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden bg-white`}
               >
                 <div
                   style={
@@ -46,7 +110,12 @@ export const Dashboard: React.FC = () => {
                   }
                   className="flex-grow"
                 >
-                  <h2 className="text-xl font-bold mb-2">{company.name}</h2>
+                  <h2 className="text-2xl font-bold mb-2 flex flex-col">
+                    {company.company_name}{" "}
+                    {company.ticker ? (
+                      <span className="text-sm">{company.ticker}</span>
+                    ) : null}
+                  </h2>
 
                   {isLoading && <h5>Currently fetching the news...</h5>}
 
@@ -87,6 +156,13 @@ export const Dashboard: React.FC = () => {
                     </button>
                     <button className="bg-blue-500 text-white px-3 py-1 rounded shadow">
                       Refresh
+                    </button>
+
+                    <button
+                      onClick={() => onStockGraphOpen(company)}
+                      className="bg-green-500 text-white px-3 py-1 rounded shadow"
+                    >
+                      See stock graph
                     </button>
                   </div>
                 )}

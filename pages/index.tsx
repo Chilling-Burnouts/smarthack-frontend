@@ -1,8 +1,18 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { Layout } from "@src/components/layout";
+import { useAuthState } from "@src/redux/auth";
 
 const LandingPage: React.FC = () => {
+  const authState = useAuthState();
+
+  const router = useRouter();
+
+  if (authState.isLoggedIn) {
+    router.push("/dashboard");
+  }
+
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center h-screen bg-background text-center">

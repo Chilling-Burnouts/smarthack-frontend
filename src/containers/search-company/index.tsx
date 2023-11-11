@@ -1,6 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import axios from "axios";
+import Image from "next/image";
 import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 
 import { Button } from "@src/components/button";
@@ -11,9 +14,6 @@ import { useAppDispatch } from "@src/redux/store";
 
 import { ICompany } from "./defs";
 import { schema } from "./schema";
-import { toast } from "react-toastify";
-import axios from "axios";
-import Image from "next/image";
 
 type FormValues = yup.InferType<typeof schema>;
 
@@ -43,32 +43,21 @@ export const SearchCompany: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const companies = await axios.post(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/companies/search`,
         {
           companyName: data.name,
         }
       );
 
-      console.log(companies);
+      const companies = response.data.result as ICompany[];
+
+      console.log({ companies });
+
+      setCompanies(companies);
     } catch (err) {
       console.log(err);
     }
-
-    setCompanies([
-      {
-        id: "1",
-        name: "Company 1",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vitae nulla nec nisl aliquam aliquet. Nulla facilisi. Donec nec nisl eget odio tincidunt luctus. Nulla facilisi. Donec nec nisl eget odio tincidunt luctus.",
-      },
-      {
-        id: "2",
-        name: "Company 2",
-        description:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vitae nulla nec nisl aliquam aliquet. Nulla facilisi. Donec nec nisl eget odio tincidunt luctus. Nulla facilisi. Donec nec nisl eget odio tincidunt luctus.",
-      },
-    ]);
 
     reset();
 
@@ -78,11 +67,14 @@ export const SearchCompany: React.FC = () => {
   const onAddCompany = useCallback(async (company: ICompany) => {
     setIsLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // const result = await axios.post(
+    //   `${process.env.NEXT_PUBLIC_API_URL}/companies`,
+    //   company
+    // );
 
     dispatch(addCompany(company));
 
-    setCompanies((prev) => prev.filter((c) => c.id !== company.id));
+    setCompanies((prev) => prev.filter((c) => c.uuid !== company.uuid));
 
     toast.success("Successfully added company to portfolio.");
 
@@ -131,9 +123,11 @@ export const SearchCompany: React.FC = () => {
                     className="border-b border-gray-200 py-3 flex justify-between items-center"
                   >
                     <div>
-                      <h3 className="text-xl font-bold">{company.name}</h3>
-                      <p className="text-sm text-gray-500">
-                        {company.description}
+                      <h3 className="text-xl font-bold">
+                        {company.company_name}
+                      </h3>
+                      <p className="text-sm text-gray-500 max-w-5xl">
+                        {company.long_description}
                       </p>
                     </div>
                     <div

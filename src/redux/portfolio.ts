@@ -6,6 +6,7 @@ import { useAppSelector } from "./store";
 
 export interface PortfolioState {
   portfolio: IPortfolioCompany[];
+  selectedCompany: IPortfolioCompany | null;
 }
 
 type AddCompanyAction = PayloadAction<IPortfolioCompany>;
@@ -14,6 +15,7 @@ type RemoveCompanyAction = PayloadAction<IPortfolioCompany>;
 
 const initialState: PortfolioState = {
   portfolio: [],
+  selectedCompany: null,
 };
 
 export const portfolioSlice = createSlice({
@@ -25,7 +27,7 @@ export const portfolioSlice = createSlice({
     },
     updateCompany: (state, action: UpdateCompanyAction) => {
       state.portfolio = state.portfolio.map((company) => {
-        if (company.name === action.payload.name) {
+        if (company.uuid === action.payload.uuid) {
           return action.payload;
         }
         return company;
@@ -33,13 +35,17 @@ export const portfolioSlice = createSlice({
     },
     removeCompany: (state, action: RemoveCompanyAction) => {
       state.portfolio = state.portfolio.filter(
-        (company) => company.name !== action.payload.name
+        (company) => company.uuid !== action.payload.uuid
       );
+    },
+    selectCompany: (state, action: PayloadAction<IPortfolioCompany | null>) => {
+      state.selectedCompany = action.payload;
     },
   },
 });
 
-export const { addCompany, removeCompany } = portfolioSlice.actions;
+export const { addCompany, removeCompany, updateCompany, selectCompany } =
+  portfolioSlice.actions;
 
 export const usePortfolioState = () =>
   useAppSelector((state) => state.portfolio);
