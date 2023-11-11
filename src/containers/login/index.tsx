@@ -2,6 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 
 import { Button } from "@src/components/button";
@@ -22,7 +23,7 @@ export const Login: React.FC = () => {
   const form = useForm<FormValues>({
     resolver: yupResolver(schema),
 
-    mode: "all",
+    mode: "onBlur",
   });
 
   const {
@@ -33,6 +34,8 @@ export const Login: React.FC = () => {
   const onSubmit = useCallback(async (data: FormValues) => {
     router.push("/dashboard");
     dispatch(login());
+
+    toast.success("Successfully logged in.");
 
     // TODO: implement
     for (const company of portfolio) {
@@ -78,7 +81,9 @@ export const Login: React.FC = () => {
               />
             </div>
             <div className="flex justify-center">
-              <Button type="submit">Login</Button>
+              <Button className="w-full" type="submit">
+                Login
+              </Button>
             </div>
           </form>
         </FormProvider>

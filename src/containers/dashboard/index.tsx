@@ -1,68 +1,93 @@
-import { addCompany, usePortfolioState } from "@src/redux/portfolio";
+import { Loader } from "@src/components/loader";
+import { usePortfolioState } from "@src/redux/portfolio";
 
 import { riskLevelColors, getRiskLevelColor } from "./utils";
-import { useAppDispatch } from "@src/redux/store";
-import { useEffect } from "react";
-import { portfolio } from "@src/mocks/portfolio";
-
-import { Loader } from "@src/components/loader";
 
 export const Dashboard: React.FC = () => {
   const portfolioState = usePortfolioState();
 
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    for (const company of portfolio) {
-      dispatch(addCompany(company));
-    }
-  }, []);
-
   return (
-    <div className="container mx-auto p-4">
-      <ul>
-        {portfolioState.portfolio.map((company, index) => (
-          <li
-            key={index}
-            className={`flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden ${
-              company.riskLevel
-                ? riskLevelColors[company.riskLevel]
-                : "bg-white"
-            }`}
-          >
-            <div className="flex-grow">
-              <h2 className="text-xl font-bold mb-2">{company.name}</h2>
+    <div className="flex justify-center items-center h-screen">
+      <div className="container mx-auto p-4">
+        <ul
+          className="overflow-auto align-middle"
+          style={{
+            maxHeight: "640px",
+          }}
+        >
+          {portfolioState.portfolio.map((company, index) => {
+            const isLoading = !company.news && !company.riskLevel;
 
-              {company.news ? (
-                <div className="mb-4">
-                  <h3 className="font-semibold">Latest News:</h3>
-                  <p className="text-gray-700">{company.news}</p>
-                </div>
-              ) : null}
+            return (
+              <li
+                key={index}
+                className={`relative flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden ${
+                  company.riskLevel
+                    ? riskLevelColors[company.riskLevel]
+                    : "bg-white"
+                }`}
+              >
+                <div
+                  style={
+                    isLoading
+                      ? {
+                          pointerEvents: "none",
+                          opacity: 0.5,
+                          userSelect: "none",
+                        }
+                      : undefined
+                  }
+                  className="flex-grow"
+                >
+                  <h2 className="text-xl font-bold mb-2">{company.name}</h2>
 
-              {company.riskLevel ? (
-                <div className="flex items-center">
-                  <h3 className="font-semibold mr-2">Estimated Risk Level:</h3>
-                  <span
-                    className={`px-3 py-1 rounded-full text-white text-sm font-semibold shadow-sm`}
-                    style={{
-                      backgroundColor: getRiskLevelColor(company.riskLevel),
-                    }}
-                  >
-                    {company.riskLevel.toUpperCase()}
-                  </span>
-                </div>
-              ) : null}
+                  {isLoading && <h5>Currently fetching the news...</h5>}
 
-              {!company.news && !company.riskLevel ? (
-                <div className="flex justify-center">
-                  <Loader />
+                  {company.news ? (
+                    <div className="mb-4">
+                      <h3 className="font-semibold">Latest News:</h3>
+                      <p className="text-gray-700">{company.news}</p>
+                    </div>
+                  ) : null}
+
+                  {company.riskLevel ? (
+                    <div className="flex items-center">
+                      <h3 className="font-semibold mr-2">
+                        Estimated Risk Level:
+                      </h3>
+                      <span
+                        className={`px-3 py-1 rounded-full text-white text-sm font-semibold shadow-sm`}
+                        style={{
+                          backgroundColor: getRiskLevelColor(company.riskLevel),
+                        }}
+                      >
+                        {company.riskLevel.toUpperCase()}
+                      </span>
+                    </div>
+                  ) : null}
+
+                  {isLoading && (
+                    <div className="flex justify-center">
+                      <Loader />
+                    </div>
+                  )}
                 </div>
-              ) : null}
-            </div>
-          </li>
-        ))}
-      </ul>
+
+                {!isLoading && (
+                  <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2">
+                    <button className="bg-red-500 text-white px-3 py-1 rounded shadow">
+                      Delete
+                    </button>
+                    <button className="bg-blue-500 text-white px-3 py-1 rounded shadow">
+                      Refresh
+                    </button>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 };

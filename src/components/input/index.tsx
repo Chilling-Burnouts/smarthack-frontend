@@ -1,7 +1,7 @@
+import classNames from "classnames";
 import React, { Fragment, InputHTMLAttributes } from "react";
 import { useFormContext } from "react-hook-form";
 
-import classNames from "classnames";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;

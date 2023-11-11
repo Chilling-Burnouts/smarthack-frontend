@@ -1,6 +1,6 @@
+import classNames from "classnames";
 import React, { ButtonHTMLAttributes } from "react";
 
-import classNames from "classnames";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;

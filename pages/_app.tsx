@@ -13,7 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <Component {...pageProps} />
 
-      <ToastContainer />
+      <ToastContainer position="bottom-right" />
     </Provider>
   );
 }

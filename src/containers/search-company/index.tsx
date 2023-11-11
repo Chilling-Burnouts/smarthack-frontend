@@ -1,18 +1,17 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { Button } from "@src/components/button";
 import { Input } from "@src/components/input";
-
+import { PageLoader } from "@src/components/page-loader";
+import { addCompany, usePortfolioState } from "@src/redux/portfolio";
 import { useAppDispatch } from "@src/redux/store";
 
 import { ICompany } from "./defs";
 import { schema } from "./schema";
-import { PageLoader } from "@src/components/page-loader";
-import { addCompany } from "@src/redux/portfolio";
+import { toast } from "react-toastify";
 
 type FormValues = yup.InferType<typeof schema>;
 
@@ -22,9 +21,11 @@ export const SearchCompany: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
+  const portfolioState = usePortfolioState();
+
   const form = useForm<FormValues>({
     resolver: yupResolver(schema),
-    mode: "all",
+    mode: "onBlur",
   });
 
   const {
@@ -68,6 +69,10 @@ export const SearchCompany: React.FC = () => {
 
     dispatch(addCompany(company));
 
+    setCompanies((prev) => prev.filter((c) => c.id !== company.id));
+
+    toast.success("Successfully added company to portfolio.");
+
     setIsLoading(false);
   }, []);
 
@@ -75,7 +80,7 @@ export const SearchCompany: React.FC = () => {
     <div className="p-6">
       {isLoading ? <PageLoader /> : null}
 
-      <div className="rounded px-8 pt-6 pb-8 mb-4">
+      <div className="bg-secondary rounded px-8 pt-6 pb-8 mb-4">
         <FormProvider {...form}>
           <form
             className="flex flex-col container"
@@ -112,8 +117,15 @@ export const SearchCompany: React.FC = () => {
                     key={index}
                     className="border-b border-gray-200 py-3 flex justify-between items-center"
                   >
-                    <span>{company.name}</span>
-                    <Button onClick={() => onAddCompany(company)}>Add</Button>
+                    <div>
+                      <h3 className="text-xl font-bold">{company.name}</h3>
+                      <p className="text-sm text-gray-500">
+                        {company.description}
+                      </p>
+                    </div>
+                    <Button onClick={() => onAddCompany(company)}>
+                      Add to portfolio
+                    </Button>
                   </li>
                 ))}
               </ul>

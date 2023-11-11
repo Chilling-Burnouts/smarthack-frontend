@@ -1,4 +1,6 @@
-import { Navbar } from "@src/containers/navigation-bar";
+import { Sidebar } from "@src/containers/sidebar";
+
+import "./styles.css";
 
 export interface LayoutProps {
   children: React.ReactNode;
@@ -6,10 +8,10 @@ export interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = (props) => {
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
+    <div className="app-container">
+      <Sidebar />
 
-      <main>{props.children}</main>
+      <main className="bg-background">{props.children}</main>
     </div>
   );
 };
