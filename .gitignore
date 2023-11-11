@@ -1,0 +1,8 @@
+# Output
+.next/
+
+# Environmental variables
+.env
+
+# Modules
+node_modules/
