@@ -10,6 +10,18 @@ export const Dashboard: React.FC = () => {
     <div className="flex justify-center items-center">
       <div className="container mx-auto p-4">
         <ul className="overflow-auto align-middle">
+          {portfolioState.portfolio.length === 0 && (
+            <li className="flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden bg-white">
+              <div className="flex-grow">
+                <h2 className="text-xl font-bold mb-2">
+                  You have no companies in your portfolio.
+                </h2>
+                <h5 className="text-gray-700">
+                  Add a company to your portfolio to get started.
+                </h5>
+              </div>
+            </li>
+          )}
           {portfolioState.portfolio.map((company, index) => {
             const isLoading = !company.news && !company.riskLevel;
 

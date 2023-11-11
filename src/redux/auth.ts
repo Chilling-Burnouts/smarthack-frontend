@@ -2,8 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { useAppSelector } from "./store";
 
+export interface IUser {
+  username: string;
+}
+
 export interface AuthState {
   isLoggedIn: boolean;
+
+  user?: IUser;
 }
 
 const initialState: AuthState = {

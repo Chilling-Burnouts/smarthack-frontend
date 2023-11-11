@@ -7,12 +7,13 @@ import * as yup from "yup";
 
 import { Button } from "@src/components/button";
 import { Input } from "@src/components/input";
-import { portfolio } from "@src/mocks/portfolio";
 import { login } from "@src/redux/auth";
-import { addCompany } from "@src/redux/portfolio";
 import { useAppDispatch } from "@src/redux/store";
 
 import { schema } from "./schema";
+
+import axios from "axios";
+import { setUser } from "@src/auth";
 
 type FormValues = yup.InferType<typeof schema>;
 
@@ -33,14 +34,14 @@ export const Login: React.FC = () => {
 
   const onSubmit = useCallback(async (data: FormValues) => {
     router.push("/dashboard");
+
     dispatch(login());
 
-    toast.success("Successfully logged in.");
+    setUser({
+      username: data.username,
+    });
 
-    // TODO: implement
-    for (const company of portfolio) {
-      dispatch(addCompany(company));
-    }
+    toast.success("Successfully logged in.");
   }, []);
 
   return (

@@ -12,6 +12,8 @@ import { useAppDispatch } from "@src/redux/store";
 import { ICompany } from "./defs";
 import { schema } from "./schema";
 import { toast } from "react-toastify";
+import axios from "axios";
+import Image from "next/image";
 
 type FormValues = yup.InferType<typeof schema>;
 
@@ -40,7 +42,18 @@ export const SearchCompany: React.FC = () => {
     setCompanies([]);
     setIsLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const companies = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/companies/search`,
+        {
+          companyName: data.name,
+        }
+      );
+
+      console.log(companies);
+    } catch (err) {
+      console.log(err);
+    }
 
     setCompanies([
       {
@@ -80,7 +93,7 @@ export const SearchCompany: React.FC = () => {
     <div className="p-6">
       {isLoading ? <PageLoader /> : null}
 
-      <div className="bg-secondary rounded px-8 pt-6 pb-8 mb-4">
+      <div className="rounded px-8 pt-6 pb-8 mb-4">
         <FormProvider {...form}>
           <form
             className="flex flex-col container"
@@ -123,9 +136,20 @@ export const SearchCompany: React.FC = () => {
                         {company.description}
                       </p>
                     </div>
-                    <Button onClick={() => onAddCompany(company)}>
-                      Add to portfolio
-                    </Button>
+                    <div
+                      style={{
+                        cursor: "pointer",
+                      }}
+                      onClick={() => onAddCompany(company)}
+                    >
+                      <Image
+                        alt="Add"
+                        priority
+                        src="/add.svg"
+                        height={32}
+                        width={32}
+                      />
+                    </div>
                   </li>
                 ))}
               </ul>
