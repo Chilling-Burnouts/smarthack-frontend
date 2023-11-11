@@ -1,47 +1,92 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect } from "react";
 
+import { Button } from "@src/components/button";
 import { Loader } from "@src/components/loader";
 import { Modal } from "@src/components/modal";
 import { StockChart } from "@src/components/stock-chart";
+import { useAppDispatch, useAppSelector } from "@src/redux/hooks";
 import {
+  removeCompany,
   selectCompany,
   updateCompany,
-  usePortfolioState,
 } from "@src/redux/portfolio";
-import { useAppDispatch } from "@src/redux/store";
 
 import { IPortfolioCompany } from "./defs";
-import { getRiskLevelColor } from "./utils";
+import { getRiskLevelColor, sentimentToRiskLevel } from "./utils";
 
 export const Dashboard: React.FC = () => {
-  const portfolioState = usePortfolioState();
+  const portfolioState = useAppSelector((state) => state.portfolio);
   const dispatch = useAppDispatch();
 
-  const [isStockGraphOpen, setIsStockGraphOpen] = useState(false);
+  const fetchTicker = async (company: IPortfolioCompany) => {
+    const encodedCompanyName = encodeURIComponent(company.company_name);
 
-  const refetchCompany = async (company: IPortfolioCompany) => {
-    const responseTicker = await axios.get(
-      `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/ticker?company_name=${company.company_name}`
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/ticker?company_name=${encodedCompanyName}`
     );
 
-    const ticker = responseTicker.data.ticker;
+    const ticker = response.data.ticker;
 
-    const responseTimeSeries = await axios.get(
-      `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/timeseries/daily?ticker=${ticker}`
+    dispatch(updateCompany({ ...company, ticker }));
+
+    return ticker;
+  };
+
+  const fetchNews = async (company: IPortfolioCompany) => {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/news/summarized?ticker=${company.ticker}`
     );
+    const news = response.data.news;
+    dispatch(updateCompany({ ...company, news }));
+  };
 
-    const timeSeries = responseTimeSeries.data.timeseries;
+  const fetchSentiment = async (company: IPortfolioCompany) => {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/sentiment?ticker=${company.ticker}`
+    );
+    const sentiment = response.data.sentiment;
 
     dispatch(
       updateCompany({
         ...company,
-        ticker,
-        timeSeries,
-        news: "nu prea",
-        riskLevel: "low",
+        riskLevel: sentimentToRiskLevel(sentiment.score),
+        sentiment: {
+          label: sentiment.label,
+        },
       })
     );
+  };
+
+  const fetchTimeSeries = async (company: IPortfolioCompany) => {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/timeseries/daily?ticker=${company.ticker}`
+    );
+
+    const timeSeries = response.data.timeseries;
+
+    dispatch(updateCompany({ ...company, timeSeries }));
+  };
+
+  const refetchCompany = async (company: IPortfolioCompany) => {
+    dispatch(updateCompany({ ...company, isRefetching: true }));
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    const ticker = await fetchTicker(company);
+
+    dispatch(updateCompany({ ...company, ticker, isRefetching: true }));
+
+    company = { ...company, ticker };
+
+    await Promise.all([
+      fetchNews(company),
+      fetchSentiment(company),
+      fetchTimeSeries(company),
+    ]);
+
+    dispatch(updateCompany({ ...company, isRefetching: false }));
   };
 
   useEffect(() => {
@@ -49,18 +94,19 @@ export const Dashboard: React.FC = () => {
       return;
     }
 
-    refetchCompany(portfolioState.portfolio[0]);
-    // for (const company of portfolioState.portfolio) {
-    //   refetchCompany(company)
-    // }
+    for (const company of portfolioState.portfolio) {
+      refetchCompany(company);
+    }
   }, [portfolioState.portfolio.length === 0]);
 
-  console.log(portfolioState.portfolio[0]);
-  console.log("^");
-
   const onStockGraphOpen = (company: IPortfolioCompany) => {
-    setIsStockGraphOpen(true);
     dispatch(selectCompany(company));
+  };
+
+  const onDeleteCompany = (company: IPortfolioCompany) => {
+    dispatch(removeCompany(company));
+
+    dispatch(selectCompany(null));
   };
 
   const onModalClose = () => dispatch(selectCompany(null));
@@ -91,38 +137,38 @@ export const Dashboard: React.FC = () => {
           )}
 
           {portfolioState.portfolio.map((company, index) => {
-            const isLoading = !company.news && !company.riskLevel;
-
             return (
               <li
                 key={index}
                 className={`relative flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden bg-white`}
               >
-                <div
-                  style={
-                    isLoading
-                      ? {
-                          pointerEvents: "none",
-                          opacity: 0.5,
-                          userSelect: "none",
-                        }
-                      : undefined
-                  }
-                  className="flex-grow"
-                >
+                <div className="flex-grow">
                   <h2 className="text-2xl font-bold mb-2 flex flex-col">
-                    {company.company_name}{" "}
+                    {company.company_name}
                     {company.ticker ? (
                       <span className="text-sm">{company.ticker}</span>
                     ) : null}
                   </h2>
 
-                  {isLoading && <h5>Currently fetching the news...</h5>}
+                  <hr />
+
+                  {!company.news && <h5>Currently fetching the news...</h5>}
 
                   {company.news ? (
                     <div className="mb-4">
-                      <h3 className="font-semibold">Latest News:</h3>
-                      <p className="text-gray-700">{company.news}</p>
+                      <h3 className="font-semibold text-xl">Latest News:</h3>
+                      {company.news.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-col space-y-2 mt-2"
+                        >
+                          <Link href={item.url}>
+                            <h4 className="font-semibold">{item.title}</h4>
+                          </Link>
+                          <p>{item.summary}</p>
+                          <hr />
+                        </div>
+                      ))}
                     </div>
                   ) : null}
 
@@ -142,30 +188,46 @@ export const Dashboard: React.FC = () => {
                     </div>
                   ) : null}
 
-                  {isLoading && (
+                  {!company.news && (
                     <div className="flex justify-center">
                       <Loader />
                     </div>
                   )}
                 </div>
 
-                {!isLoading && (
-                  <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2">
-                    <button className="bg-red-500 text-white px-3 py-1 rounded shadow">
-                      Delete
-                    </button>
-                    <button className="bg-blue-500 text-white px-3 py-1 rounded shadow">
-                      Refresh
-                    </button>
+                <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2">
+                  <Button
+                    onClick={() => onDeleteCompany(company)}
+                    className={`bg-red-500 ${
+                      company.isRefetching
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    } text-white px-3 py-1 rounded shadow`}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    disabled={company.isRefetching}
+                    onClick={() => refetchCompany(company)}
+                    className={`bg-blue-500 ${
+                      company.isRefetching
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }
+                    } text-white px-3 py-1 rounded shadow`}
+                  >
+                    {company.isRefetching ? "Refreshing..." : "Refresh"}
+                  </Button>
 
-                    <button
+                  {company.timeSeries && (
+                    <Button
                       onClick={() => onStockGraphOpen(company)}
                       className="bg-green-500 text-white px-3 py-1 rounded shadow"
                     >
                       See stock graph
-                    </button>
-                  </div>
-                )}
+                    </Button>
+                  )}
+                </div>
               </li>
             );
           })}

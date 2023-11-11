@@ -1,4 +1,11 @@
-export const Loader: React.FC = () => {
+import classNames from "classnames";
+
+export interface ILoaderProps {
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+export const Loader: React.FC<ILoaderProps> = (props) => {
   return (
     <div
       style={{
@@ -7,8 +14,13 @@ export const Loader: React.FC = () => {
         borderRightColor: "transparent",
         borderBottomColor: "transparent",
         borderLeftColor: "transparent",
+
+        ...props.style,
       }}
-      className="loader mb-4 h-32 w-32 animate-spin rounded-full border-8 border-t-8 border-gray-200 ease-linear"
-    ></div>
+      className={classNames(
+        `h-32 w-32 animate-spin rounded-full border-8 border-t-8 border-gray-200 ease-linear`,
+        props.className
+      )}
+    />
   );
 };

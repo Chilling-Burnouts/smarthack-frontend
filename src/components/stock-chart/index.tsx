@@ -51,6 +51,7 @@ export const StockChart: React.FC<StockChartProps> = ({ timeSeries }) => {
   const volumes = dates.map((date) =>
     parseFloat(timeSeries[date]["5. volume"])
   );
+
   const chartData = {
     labels: dates,
     datasets: [

@@ -9,8 +9,8 @@ import * as yup from "yup";
 import { Button } from "@src/components/button";
 import { Input } from "@src/components/input";
 import { PageLoader } from "@src/components/page-loader";
-import { addCompany, usePortfolioState } from "@src/redux/portfolio";
-import { useAppDispatch } from "@src/redux/store";
+import { useAppDispatch } from "@src/redux/hooks";
+import { addCompany } from "@src/redux/portfolio";
 
 import { ICompany } from "./defs";
 import { schema } from "./schema";
@@ -22,8 +22,6 @@ export const SearchCompany: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useAppDispatch();
-
-  const portfolioState = usePortfolioState();
 
   const form = useForm<FormValues>({
     resolver: yupResolver(schema),

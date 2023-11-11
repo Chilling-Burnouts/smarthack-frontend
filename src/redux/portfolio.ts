@@ -2,8 +2,6 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { IPortfolioCompany } from "../containers/dashboard/defs";
 
-import { useAppSelector } from "./store";
-
 export interface PortfolioState {
   portfolio: IPortfolioCompany[];
   selectedCompany: IPortfolioCompany | null;
@@ -28,8 +26,12 @@ export const portfolioSlice = createSlice({
     updateCompany: (state, action: UpdateCompanyAction) => {
       state.portfolio = state.portfolio.map((company) => {
         if (company.uuid === action.payload.uuid) {
-          return action.payload;
+          return {
+            ...company,
+            ...action.payload,
+          };
         }
+
         return company;
       });
     },
@@ -46,8 +48,5 @@ export const portfolioSlice = createSlice({
 
 export const { addCompany, removeCompany, updateCompany, selectCompany } =
   portfolioSlice.actions;
-
-export const usePortfolioState = () =>
-  useAppSelector((state) => state.portfolio);
 
 export default portfolioSlice.reducer;

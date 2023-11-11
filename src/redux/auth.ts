@@ -1,7 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { useAppSelector } from "./store";
-
 export interface IUser {
   username: string;
 }
@@ -30,7 +28,5 @@ export const authSlice = createSlice({
 });
 
 export const { login, logout } = authSlice.actions;
-
-export const useAuthState = () => useAppSelector((state) => state.auth);
 
 export default authSlice.reducer;

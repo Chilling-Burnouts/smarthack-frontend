@@ -2,11 +2,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 
-import { useAuthState, logout } from "@src/redux/auth";
-import { useAppDispatch } from "@src/redux/store";
+import { logout } from "@src/redux/auth";
+import { useAppDispatch, useAppSelector } from "@src/redux/hooks";
 
 export const Sidebar: React.FC = () => {
-  const authState = useAuthState();
+  const authState = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const router = useRouter();
 

@@ -2,10 +2,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { Layout } from "@src/components/layout";
-import { useAuthState } from "@src/redux/auth";
+import { useAppSelector } from "@src/redux/hooks";
 
 const LandingPage: React.FC = () => {
-  const authState = useAuthState();
+  const authState = useAppSelector((state) => state.auth);
 
   const router = useRouter();
 
