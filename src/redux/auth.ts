@@ -14,16 +14,16 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login(state, action) {
-      state.isLoggedIn = false;
+    login(state) {
+      state.isLoggedIn = true;
     },
-    logout(state, action) {
+    logout(state) {
       state.isLoggedIn = false;
     },
   },
 });
 
-export const { login } = authSlice.actions;
+export const { login, logout } = authSlice.actions;
 
 export const useAuthState = () => useAppSelector((state) => state.auth);
 

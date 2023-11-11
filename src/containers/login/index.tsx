@@ -1,15 +1,24 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button } from "@src/src/components/button";
-import { FormProvider, useForm } from "react-hook-form";
-import { schema } from "./schema";
-
-import * as yup from "yup";
-import Input from "@src/src/components/input";
+import { useRouter } from "next/router";
 import { useCallback } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import * as yup from "yup";
+
+import { Button } from "@src/components/button";
+import { Input } from "@src/components/input";
+import { portfolio } from "@src/mocks/portfolio";
+import { login } from "@src/redux/auth";
+import { addCompany } from "@src/redux/portfolio";
+import { useAppDispatch } from "@src/redux/store";
+
+import { schema } from "./schema";
 
 type FormValues = yup.InferType<typeof schema>;
 
 export const Login: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const form = useForm<FormValues>({
     resolver: yupResolver(schema),
 
@@ -17,15 +26,18 @@ export const Login: React.FC = () => {
   });
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
   } = form;
 
-  console.log(errors);
-
   const onSubmit = useCallback(async (data: FormValues) => {
-    console.log(data);
+    router.push("/dashboard");
+    dispatch(login());
+
+    // TODO: implement
+    for (const company of portfolio) {
+      dispatch(addCompany(company));
+    }
   }, []);
 
   return (
@@ -46,6 +58,7 @@ export const Login: React.FC = () => {
                 id="username"
                 type="text"
                 placeholder="Your username"
+                className="w-full"
                 error={errors.username?.message}
               />
             </div>
@@ -59,6 +72,7 @@ export const Login: React.FC = () => {
               <Input
                 id="password"
                 type="password"
+                className="w-full"
                 placeholder="Your password"
                 error={errors.password?.message}
               />

@@ -1,5 +1,5 @@
-import { Layout } from "@src/src/components/layout";
-import { Login } from "@src/src/containers/login";
+import { Layout } from "@src/components/layout";
+import { Login } from "@src/containers/login";
 
 const LoginPage: React.FC = () => {
   return (

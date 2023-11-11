@@ -1,4 +1,4 @@
-import Navbar from "@src/src/containers/navigation-bar";
+import { Navbar } from "@src/containers/navigation-bar";
 
 export interface LayoutProps {
   children: React.ReactNode;
@@ -6,7 +6,7 @@ export interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = (props) => {
   return (
-    <div className="min-h-screen bg-primary ">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <main>{props.children}</main>
