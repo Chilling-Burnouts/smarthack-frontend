@@ -11,7 +11,7 @@ export const Layout: React.FC<LayoutProps> = (props) => {
     <div className="app-container">
       <Sidebar />
 
-      <main className="bg-background">{props.children}</main>
+      <main className="main-content bg-background">{props.children}</main>
     </div>
   );
 };

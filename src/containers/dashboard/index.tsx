@@ -7,14 +7,9 @@ export const Dashboard: React.FC = () => {
   const portfolioState = usePortfolioState();
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center">
       <div className="container mx-auto p-4">
-        <ul
-          className="overflow-auto align-middle"
-          style={{
-            maxHeight: "640px",
-          }}
-        >
+        <ul className="overflow-auto align-middle">
           {portfolioState.portfolio.map((company, index) => {
             const isLoading = !company.news && !company.riskLevel;
 

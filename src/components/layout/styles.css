@@ -4,3 +4,10 @@
     grid-template-rows: auto 1fr;
     min-height: 100vh;
 }
+
+.main-content {
+    flex-grow: 1;
+    max-height: 100vh;
+    overflow-y: auto;
+}
+  
