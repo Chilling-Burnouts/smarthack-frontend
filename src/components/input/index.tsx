@@ -1,23 +1,25 @@
-import { InputHTMLAttributes } from "react";
+import React, { Fragment, InputHTMLAttributes } from "react";
+import { useFormContext } from "react-hook-form";
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  id: string;
-  type: string;
-  placeholder: string;
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  error?: string;
 }
-export const Input: React.FC<InputProps> = ({
-  id,
-  type,
-  placeholder,
-  ...props
-}) => {
+
+const Input: React.FC<InputProps> = ({ error, ...rest }) => {
+  const { register } = useFormContext();
+
   return (
-    <input
-      type={type}
-      id={id}
-      placeholder={placeholder}
-      className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border border-gray-300 rounded-md p-2"
-      {...props}
-    />
+    <Fragment>
+      <input
+        {...rest}
+        className={`shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border ${
+          error ? "border-red-500" : "border-gray-300"
+        } rounded-md p-2`}
+        {...register(rest.id as string)}
+      />
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    </Fragment>
   );
 };
+
+export default Input;
