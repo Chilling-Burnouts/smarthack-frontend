@@ -74,11 +74,13 @@ export const Dashboard: React.FC = () => {
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
-    const ticker = await fetchTicker(company);
+    if (!company.ticker) {
+      const ticker = await fetchTicker(company);
 
-    dispatch(updateCompany({ ...company, ticker, isRefetching: true }));
+      dispatch(updateCompany({ ...company, ticker, isRefetching: true }));
 
-    company = { ...company, ticker };
+      company = { ...company, ticker };
+    }
 
     await Promise.all([
       fetchNews(company),
@@ -94,9 +96,13 @@ export const Dashboard: React.FC = () => {
       return;
     }
 
-    for (const company of portfolioState.portfolio) {
-      refetchCompany(company);
-    }
+    const refreshAll = async () => {
+      for (const company of portfolioState.portfolio) {
+        refetchCompany(company);
+      }
+    };
+
+    setInterval(refreshAll, 5000);
   }, [portfolioState.portfolio.length === 0]);
 
   const onStockGraphOpen = (company: IPortfolioCompany) => {
