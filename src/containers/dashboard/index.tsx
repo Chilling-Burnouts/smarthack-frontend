@@ -182,7 +182,7 @@ export const Dashboard: React.FC = () => {
                     </div>
 
                     <div className="col-span-1 flex justify-center items-center">
-                      {company.sentiment ? (
+                      {company.sentiment && company.news ? (
                         <div className="flex items-center justify-center h-2/5">
                           <GradientBar
                             sentimentValue={company.sentiment.value}

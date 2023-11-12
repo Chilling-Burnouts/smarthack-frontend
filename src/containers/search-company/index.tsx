@@ -1,15 +1,15 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
-import Image from "next/image";
 import { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 
 import { Button } from "@src/components/button";
+import { Companies } from "@src/components/companies";
 import { Input } from "@src/components/input";
 import { PageLoader } from "@src/components/page-loader";
-import { useAppDispatch } from "@src/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@src/redux/hooks";
 import { addCompany } from "@src/redux/portfolio";
 
 import { ICompany } from "./defs";
@@ -23,6 +23,8 @@ export const SearchCompany: React.FC = () => {
 
   const dispatch = useAppDispatch();
 
+  const portfolioState = useAppSelector((state) => state.portfolio);
+
   const form = useForm<FormValues>({
     resolver: yupResolver(schema),
     mode: "onBlur",
@@ -33,8 +35,6 @@ export const SearchCompany: React.FC = () => {
     formState: { errors },
     reset,
   } = form;
-
-  console.log({ errors });
 
   const searchCompanies = async (data: FormValues) => {
     setCompanies([]);
@@ -50,9 +50,14 @@ export const SearchCompany: React.FC = () => {
 
       const companies = response.data.result as ICompany[];
 
-      console.log({ companies });
+      const filteredCompanies = companies.filter(
+        (comp) =>
+          !portfolioState.portfolio.some(
+            (company) => company.company_name === comp.company_name
+          )
+      );
 
-      setCompanies(companies);
+      setCompanies(filteredCompanies);
     } catch (err) {
       console.log(err);
     }
@@ -65,14 +70,11 @@ export const SearchCompany: React.FC = () => {
   const onAddCompany = useCallback(async (company: ICompany) => {
     setIsLoading(true);
 
-    // const result = await axios.post(
-    //   `${process.env.NEXT_PUBLIC_API_URL}/companies`,
-    //   company
-    // );
-
     dispatch(addCompany(company));
 
-    setCompanies((prev) => prev.filter((c) => c.uuid !== company.uuid));
+    setCompanies((prev) =>
+      prev.filter((c) => c.company_name !== company.company_name)
+    );
 
     toast.success("Successfully added company to portfolio.");
 
@@ -110,43 +112,7 @@ export const SearchCompany: React.FC = () => {
 
       <div className="mt-5">
         {companies.length > 0 && (
-          <div>
-            <hr className="p-4" />
-
-            <div className="bg-white shadow-md rounded px-8 pt-6 pb-8">
-              <ul>
-                {companies.map((company, index) => (
-                  <li
-                    key={index}
-                    className="border-b border-gray-200 py-3 flex justify-between items-center"
-                  >
-                    <div>
-                      <h3 className="text-xl font-bold">
-                        {company.company_name}
-                      </h3>
-                      <p className="text-sm text-gray-500 max-w-5xl">
-                        {company.long_description}
-                      </p>
-                    </div>
-                    <div
-                      style={{
-                        cursor: "pointer",
-                      }}
-                      onClick={() => onAddCompany(company)}
-                    >
-                      <Image
-                        alt="Add"
-                        priority
-                        src="/add.svg"
-                        height={32}
-                        width={32}
-                      />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <Companies companies={companies} onAddCompany={onAddCompany} />
         )}
       </div>
     </div>

@@ -1,5 +1,4 @@
 export interface ICompany {
-  uuid: string;
   long_description: string;
   short_description: string;
   company_name: string;

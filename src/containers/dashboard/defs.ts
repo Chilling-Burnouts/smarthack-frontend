@@ -9,7 +9,7 @@ export interface IPortfolioCompany extends ICompany {
 
   riskLevel?: "low" | "medium" | "high";
 
-  sentiment: {
+  sentiment?: {
     label:
       | "Bearish"
       | "Somewhat-Bearish"

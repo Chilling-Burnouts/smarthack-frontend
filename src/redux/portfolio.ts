@@ -25,7 +25,7 @@ export const portfolioSlice = createSlice({
     },
     updateCompany: (state, action: UpdateCompanyAction) => {
       state.portfolio = state.portfolio.map((company) => {
-        if (company.uuid === action.payload.uuid) {
+        if (company.company_name === action.payload.company_name) {
           return {
             ...company,
             ...action.payload,
@@ -37,7 +37,7 @@ export const portfolioSlice = createSlice({
     },
     removeCompany: (state, action: RemoveCompanyAction) => {
       state.portfolio = state.portfolio.filter(
-        (company) => company.uuid !== action.payload.uuid
+        (company) => company.company_name !== action.payload.company_name
       );
     },
     selectCompany: (state, action: PayloadAction<IPortfolioCompany | null>) => {
