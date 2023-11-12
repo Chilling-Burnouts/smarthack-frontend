@@ -149,11 +149,13 @@ export const Dashboard: React.FC = () => {
               >
                 <div className="flex-grow">
                   <div className="flex justify-between">
-                    <h2 className="text-2xl font-bold mb-2 flex flex-col">
+                    <h2 className="text-2xl font-bold mb-2 flex items-center">
                       {company.company_name}
-                      {company.ticker ? (
-                        <span className="text-sm">{company.ticker}</span>
-                      ) : null}
+                      {company.ticker && (
+                        <span className="ml-2 bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded">
+                          {company.ticker}
+                        </span>
+                      )}
                     </h2>
 
                     <div className="mr-16 align-center space-x-2">
