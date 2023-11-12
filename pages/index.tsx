@@ -9,7 +9,7 @@ const LandingPage: React.FC = () => {
   const router = useRouter();
 
   if (authState.isLoggedIn) {
-    router.push("/dashboard");
+    router.push("/portfolio");
   }
 
   return (

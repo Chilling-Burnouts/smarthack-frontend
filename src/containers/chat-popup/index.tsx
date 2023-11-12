@@ -133,13 +133,15 @@ export const ChatPopup: React.FC<IChatMessageProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 h-96 bg-white shadow-lg rounded-lg p-4 flex flex-col">
+    <div className="fixed bottom-4 right-4 w-96 h-96 bg-white shadow-2xl rounded-lg p-4 flex flex-col border border-gray-300">
       <div className="flex justify-end items-center mb-4">
-        <button onClick={onClose} className="mb-4 px-2 rounded-full">
+        <button
+          onClick={onClose}
+          className="mb-4 px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800 shadow-md"
+        >
           X
         </button>
       </div>
-
       <div className="overflow-y-auto flex-grow mb-2">
         {conversation.map((msg, index) => (
           <ChatMessage key={index} text={msg.text} isUser={msg.isUser} />
@@ -149,7 +151,6 @@ export const ChatPopup: React.FC<IChatMessageProps> = ({ isOpen, onClose }) => {
 
         <div ref={messagesEndRef} />
       </div>
-
       <div className="flex justify-around">
         <FormProvider {...form}>
           <form

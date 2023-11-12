@@ -46,7 +46,7 @@ export const SearchCompany: React.FC = () => {
       path: "/big",
     },
     {
-      name: "Green",
+      name: "Green Energy",
       path: "/green",
     },
   ] as {

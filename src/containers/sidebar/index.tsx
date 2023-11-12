@@ -30,7 +30,7 @@ export const Sidebar: React.FC = () => {
       <div className="flex text-center justify-center flex-col">
         <Link
           className="text-4xl font-bold hover:text-secondary mb-10 justify-center"
-          href={authState.isLoggedIn ? "/dashboard" : "/"}
+          href={authState.isLoggedIn ? "/portfolio" : "/"}
         >
           TrendBlend
         </Link>
@@ -38,11 +38,11 @@ export const Sidebar: React.FC = () => {
           <div className="flex flex-col space-y-4 text-l">
             <Link
               className={`hover:bg-accent hover:text-white hover:shadow-md p-3 my-3 rounded-lg transition-all duration-300 ${isActive(
-                "/dashboard"
+                "/portfolio"
               )}`}
-              href="/dashboard"
+              href="/portfolio"
             >
-              Dashboard
+              Portfolio
             </Link>
             <Link
               className={`hover:bg-accent hover:text-white hover:shadow-md p-3 my-3 rounded-lg transition-all duration-300 ${isActive(

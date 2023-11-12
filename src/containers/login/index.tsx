@@ -31,7 +31,7 @@ export const Login: React.FC = () => {
   } = form;
 
   const onSubmit = useCallback(async (data: FormValues) => {
-    router.push("/dashboard");
+    router.push("/portfolio");
 
     dispatch(login());
 
