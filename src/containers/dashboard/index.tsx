@@ -152,7 +152,7 @@ export const Dashboard: React.FC = () => {
                     <h2 className="text-2xl font-bold mb-2 flex items-center">
                       {company.company_name}
                       {company.ticker && (
-                        <span className="ml-2 bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded">
+                        <span className="ml-2 bg-yellow-200 text-gray-800 text-xs px-2 py-1 rounded">
                           {company.ticker}
                         </span>
                       )}
