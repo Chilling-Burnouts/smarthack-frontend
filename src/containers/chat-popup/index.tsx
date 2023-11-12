@@ -35,8 +35,6 @@ export const ChatPopup: React.FC<IChatMessageProps> = ({ isOpen, onClose }) => {
     socket.on("message", (item) => {
       const { message } = item;
 
-      console.log({ message });
-
       if (message === "") {
         setConversation((prev) => [...prev, { text: message, isUser: false }]);
         setLoading(true);
@@ -77,8 +75,6 @@ export const ChatPopup: React.FC<IChatMessageProps> = ({ isOpen, onClose }) => {
   const [conversation, setConversation] = useState([
     { text: "Hello, how can I help you?", isUser: false },
   ]);
-
-  console.log(conversation);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

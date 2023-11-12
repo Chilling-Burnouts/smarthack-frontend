@@ -75,8 +75,6 @@ export const Recommend: React.FC = () => {
     }
   };
 
-  console.log(portfolioState);
-
   useEffect(() => {
     if (portfolioState.portfolio.length === 0) {
       return;
