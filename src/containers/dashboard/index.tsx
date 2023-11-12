@@ -145,27 +145,29 @@ export const Dashboard: React.FC = () => {
             return (
               <li
                 key={index}
-                className={`relative flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden bg-white`}
+                className="relative flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden bg-white"
               >
                 <div className="flex-grow">
-                  <div className="flex justify-between">
-                    <h2 className="text-2xl font-bold mb-2 flex items-center">
-                      {company.company_name}
-                      {company.ticker && (
-                        <span className="ml-2 bg-yellow-200 text-gray-800 text-xs px-2 py-1 rounded">
-                          {company.ticker}
-                        </span>
-                      )}
-                    </h2>
+                  <div className="grid grid-cols-[80%_auto]">
+                    <div className="col-span-1 max-w-[70%]">
+                      <h2 className="text-2xl font-bold mb-2">
+                        {company.company_name}
+                        {company.ticker && (
+                          <span className="ml-2 bg-yellow-200 text-gray-800 text-xs px-2 py-1 rounded">
+                            {company.ticker}
+                          </span>
+                        )}
+                      </h2>
+                    </div>
 
-                    <div className="mr-16 align-center space-x-2">
+                    <div className="col-span-1 flex justify-start items-start ml-4">
                       <button
                         onClick={() => onDeleteCompany(company)}
                         className={`${
                           company.isRefetching
                             ? "opacity-50 cursor-not-allowed"
                             : ""
-                        } text-white px-3 py-1 rounded `}
+                        } text-white px-3 py-1 rounded`}
                       >
                         <Image
                           src="/delete.svg"
@@ -174,6 +176,7 @@ export const Dashboard: React.FC = () => {
                           alt="Delete"
                         />
                       </button>
+
                       <button
                         disabled={company.isRefetching}
                         onClick={() => refetchCompany(company)}
@@ -181,8 +184,7 @@ export const Dashboard: React.FC = () => {
                           company.isRefetching
                             ? "opacity-50 cursor-not-allowed"
                             : ""
-                        }
-                    } text-white px-3 py-1 rounded`}
+                        } text-white px-3 py-1 rounded`}
                       >
                         <Image
                           src="/refresh.svg"
