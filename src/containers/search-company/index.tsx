@@ -143,9 +143,9 @@ export const SearchCompany: React.FC = () => {
               Company name
             </label>
             <Input
+              autoComplete="off"
               id="name"
               placeholder="Enter company name"
-              error={errors.name?.message}
             />
 
             <div className="mt-4">

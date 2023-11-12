@@ -1,8 +1,9 @@
 import axios from "axios";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
-import { Button } from "@src/components/button";
 import { GradientBar } from "@src/components/gradient-bar";
 import { Loader } from "@src/components/loader";
 import { Modal } from "@src/components/modal";
@@ -111,6 +112,8 @@ export const Dashboard: React.FC = () => {
     dispatch(removeCompany(company));
 
     dispatch(selectCompany(null));
+
+    toast.success("Successfully removed company from portfolio.");
   };
 
   const onModalClose = () => dispatch(selectCompany(null));
@@ -120,16 +123,14 @@ export const Dashboard: React.FC = () => {
       <div className="container mx-auto p-4">
         <ul className="overflow-auto align-middle">
           {portfolioState.portfolio.length === 0 && (
-            <li className="flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden bg-white">
-              <div className="flex-grow">
+            <div className="flex text-white items-center justify-center h-screen">
+              <div className="text-center">
                 <h2 className="text-xl font-bold mb-2">
                   You have no companies in your portfolio.
                 </h2>
-                <h5 className="text-gray-700">
-                  Add a company to your portfolio to get started.
-                </h5>
+                <h5>Add a company to your portfolio to get started.</h5>
               </div>
-            </li>
+            </div>
           )}
 
           {Boolean(portfolioState.selectedCompany) && (
@@ -147,12 +148,63 @@ export const Dashboard: React.FC = () => {
                 className={`relative flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden bg-white`}
               >
                 <div className="flex-grow">
-                  <h2 className="text-2xl font-bold mb-2 flex flex-col">
-                    {company.company_name}
-                    {company.ticker ? (
-                      <span className="text-sm">{company.ticker}</span>
-                    ) : null}
-                  </h2>
+                  <div className="flex justify-between">
+                    <h2 className="text-2xl font-bold mb-2 flex flex-col">
+                      {company.company_name}
+                      {company.ticker ? (
+                        <span className="text-sm">{company.ticker}</span>
+                      ) : null}
+                    </h2>
+
+                    <div className="mr-16 align-center space-x-2">
+                      <button
+                        onClick={() => onDeleteCompany(company)}
+                        className={`${
+                          company.isRefetching
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        } text-white px-3 py-1 rounded `}
+                      >
+                        <Image
+                          src="/delete.svg"
+                          width={20}
+                          height={20}
+                          alt="Delete"
+                        />
+                      </button>
+                      <button
+                        disabled={company.isRefetching}
+                        onClick={() => refetchCompany(company)}
+                        className={`${
+                          company.isRefetching
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }
+                    } text-white px-3 py-1 rounded`}
+                      >
+                        <Image
+                          src="/refresh.svg"
+                          width={20}
+                          height={20}
+                          alt="Refresh"
+                        />
+                      </button>
+
+                      {company.timeSeries && (
+                        <button
+                          onClick={() => onStockGraphOpen(company)}
+                          className="text-white px-3 py-1 rounded"
+                        >
+                          <Image
+                            src="/stock.svg"
+                            width={20}
+                            height={20}
+                            alt="Stock graph"
+                          />
+                        </button>
+                      )}
+                    </div>
+                  </div>
 
                   <hr />
 
@@ -168,10 +220,12 @@ export const Dashboard: React.FC = () => {
                             className="flex flex-col space-y-2 mt-2"
                           >
                             <Link href={item.url}>
-                              <h4 className="font-semibold">{item.title}</h4>
+                              <h4 className="font-semibold text-blue-600 hover:text-blue-800 underline">
+                                {item.title}
+                              </h4>
                             </Link>
                             <p>{item.summary}</p>
-                            <hr />
+                            {index !== company.news!.length - 1 && <hr />}
                           </div>
                         ))}
                       </div>
@@ -198,40 +252,6 @@ export const Dashboard: React.FC = () => {
                     <div className="flex justify-center">
                       <Loader />
                     </div>
-                  )}
-                </div>
-
-                <div className="absolute top-0 right-0 mt-2 mr-2 space-x-2">
-                  <Button
-                    onClick={() => onDeleteCompany(company)}
-                    className={`bg-red-500 ${
-                      company.isRefetching
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    } text-white px-3 py-1 rounded shadow`}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    disabled={company.isRefetching}
-                    onClick={() => refetchCompany(company)}
-                    className={`bg-blue-500 ${
-                      company.isRefetching
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    }
-                    } text-white px-3 py-1 rounded shadow`}
-                  >
-                    {company.isRefetching ? "Refreshing..." : "Refresh"}
-                  </Button>
-
-                  {company.timeSeries && (
-                    <Button
-                      onClick={() => onStockGraphOpen(company)}
-                      className="bg-green-500 text-white px-3 py-1 rounded shadow"
-                    >
-                      See stock graph
-                    </Button>
                   )}
                 </div>
               </li>
