@@ -16,6 +16,7 @@ export interface IPortfolioCompany extends ICompany {
       | "Neutral"
       | "Somewhat-Bullish"
       | "Bullish";
+    value: number;
   };
 
   ticker?: string;

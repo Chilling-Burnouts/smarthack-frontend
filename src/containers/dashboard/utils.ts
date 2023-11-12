@@ -16,15 +16,3 @@ export const getRiskLevelColor = (riskLevel: string) => {
       return "#6B7280";
   }
 };
-
-export const sentimentToRiskLevel = (value: number) => {
-  if (value < -0.5) {
-    return "high";
-  }
-
-  if (value < 0) {
-    return "medium";
-  }
-
-  return "low";
-};

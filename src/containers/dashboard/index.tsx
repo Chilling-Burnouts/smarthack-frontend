@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 import { Button } from "@src/components/button";
+import { GradientBar } from "@src/components/gradient-bar";
 import { Loader } from "@src/components/loader";
 import { Modal } from "@src/components/modal";
 import { StockChart } from "@src/components/stock-chart";
@@ -14,7 +15,6 @@ import {
 } from "@src/redux/portfolio";
 
 import { IPortfolioCompany } from "./defs";
-import { getRiskLevelColor, sentimentToRiskLevel } from "./utils";
 
 export const Dashboard: React.FC = () => {
   const portfolioState = useAppSelector((state) => state.portfolio);
@@ -51,9 +51,9 @@ export const Dashboard: React.FC = () => {
     dispatch(
       updateCompany({
         ...company,
-        riskLevel: sentimentToRiskLevel(sentiment.score),
         sentiment: {
           label: sentiment.label,
+          value: sentiment.score,
         },
       })
     );
@@ -71,8 +71,6 @@ export const Dashboard: React.FC = () => {
 
   const refetchCompany = async (company: IPortfolioCompany) => {
     dispatch(updateCompany({ ...company, isRefetching: true }));
-
-    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     if (!company.ticker) {
       const ticker = await fetchTicker(company);
@@ -102,7 +100,7 @@ export const Dashboard: React.FC = () => {
       }
     };
 
-    setInterval(refreshAll, 5000);
+    refreshAll();
   }, [portfolioState.portfolio.length === 0]);
 
   const onStockGraphOpen = (company: IPortfolioCompany) => {
@@ -160,39 +158,39 @@ export const Dashboard: React.FC = () => {
 
                   {!company.news && <h5>Currently fetching the news...</h5>}
 
-                  {company.news ? (
-                    <div className="mb-4">
-                      <h3 className="font-semibold text-xl">Latest News:</h3>
-                      {company.news.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col space-y-2 mt-2"
-                        >
-                          <Link href={item.url}>
-                            <h4 className="font-semibold">{item.title}</h4>
-                          </Link>
-                          <p>{item.summary}</p>
-                          <hr />
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="col-span-2">
+                      {company.news ? (
+                        <div className="mb-4 max-w-5xl">
+                          <h3 className="font-semibold text-xl">
+                            Latest News:
+                          </h3>
+                          {company.news.map((item, index) => (
+                            <div
+                              key={index}
+                              className="flex flex-col space-y-2 mt-2"
+                            >
+                              <Link href={item.url}>
+                                <h4 className="font-semibold">{item.title}</h4>
+                              </Link>
+                              <p>{item.summary}</p>
+                              <hr />
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      ) : null}
                     </div>
-                  ) : null}
 
-                  {company.riskLevel ? (
-                    <div className="flex items-center">
-                      <h3 className="font-semibold mr-2">
-                        Estimated Risk Level:
-                      </h3>
-                      <span
-                        className={`px-3 py-1 rounded-full text-white text-sm font-semibold shadow-sm`}
-                        style={{
-                          backgroundColor: getRiskLevelColor(company.riskLevel),
-                        }}
-                      >
-                        {company.riskLevel.toUpperCase()}
-                      </span>
+                    <div className="col-span-1 flex justify-center items-center">
+                      {company.sentiment ? (
+                        <div className="flex items-center justify-center h-2/5">
+                          <GradientBar
+                            sentimentValue={company.sentiment.value}
+                          />
+                        </div>
+                      ) : null}
                     </div>
-                  ) : null}
+                  </div>
 
                   {!company.news && (
                     <div className="flex justify-center">
