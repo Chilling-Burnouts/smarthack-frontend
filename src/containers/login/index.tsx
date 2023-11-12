@@ -5,15 +5,13 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 
+import { setUser } from "@src/auth";
 import { Button } from "@src/components/button";
 import { Input } from "@src/components/input";
 import { login } from "@src/redux/auth";
-import { useAppDispatch } from "@src/redux/store";
+import { useAppDispatch } from "@src/redux/hooks";
 
 import { schema } from "./schema";
-
-import axios from "axios";
-import { setUser } from "@src/auth";
 
 type FormValues = yup.InferType<typeof schema>;
 

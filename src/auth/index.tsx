@@ -4,7 +4,7 @@ export interface IUser {
   username: string;
 }
 
-export const setUser = (user: IUser) => {
+export const setUser = (user: IUser | null) => {
   if (typeof window === "undefined") return;
 
   localStorage.setItem(LOCAL_STORAGE_TOKEN, JSON.stringify(user));

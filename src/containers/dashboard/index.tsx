@@ -158,30 +158,32 @@ export const Dashboard: React.FC = () => {
 
                   {!company.news && <h5>Currently fetching the news...</h5>}
 
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-2">
-                      {company.news ? (
-                        <div className="mb-4 max-w-5xl">
-                          <h3 className="font-semibold text-xl">
-                            Latest News:
-                          </h3>
-                          {company.news.map((item, index) => (
-                            <div
-                              key={index}
-                              className="flex flex-col space-y-2 mt-2"
-                            >
-                              <Link href={item.url}>
-                                <h4 className="font-semibold">{item.title}</h4>
-                              </Link>
-                              <p>{item.summary}</p>
-                              <hr />
-                            </div>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
+                  <div className="flex">
+                    {company.news ? (
+                      <div className="mb-4">
+                        <h3 className="font-semibold text-xl">Latest News:</h3>
+                        {company.news.map((item, index) => (
+                          <div
+                            key={index}
+                            className="flex flex-col space-y-2 mt-2"
+                          >
+                            <Link href={item.url}>
+                              <h4 className="font-semibold">{item.title}</h4>
+                            </Link>
+                            <p>{item.summary}</p>
+                            <hr />
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
 
-                    <div className="col-span-1 flex justify-center items-center">
+                    <div
+                      style={{
+                        width: "1200px",
+                        marginRight: "100px",
+                      }}
+                      className=" flex justify-center items-center"
+                    >
                       {company.sentiment && company.news ? (
                         <div className="flex items-center justify-center h-2/5">
                           <GradientBar

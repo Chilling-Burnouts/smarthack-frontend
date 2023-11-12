@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 
+import { setUser } from "@src/auth";
 import { logout } from "@src/redux/auth";
 import { useAppDispatch, useAppSelector } from "@src/redux/hooks";
 
@@ -16,6 +17,7 @@ export const Sidebar: React.FC = () => {
 
   const onLogout = useCallback(() => {
     dispatch(logout());
+    setUser(null);
     router.push("/");
   }, []);
 
