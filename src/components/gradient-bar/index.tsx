@@ -25,40 +25,37 @@ export const GradientBar: React.FC<IGradientBar> = ({ sentimentValue }) => {
 
         <div
           className="absolute"
-          style={{ bottom: `${somewhatBearishPos}%`, left: "100%" }}
+          style={{ bottom: `${somewhatBearishPos}%`, left: "0%" }}
         >
-          <div className="w-32 h-px bg-blue-500"></div>
+          <div className="w-44 h-px bg-blue-500"></div>
+        </div>
+
+        <div className="absolute" style={{ bottom: `${middle}%`, left: "0%" }}>
+          <div className="w-44 h-px bg-blue-500"></div>
         </div>
 
         <div
           className="absolute"
-          style={{ bottom: `${middle}%`, left: "100%" }}
+          style={{ bottom: `${neutralPosStart}%`, left: "0%" }}
         >
-          <div className="w-32 h-px bg-blue-500"></div>
+          <div className="w-44 h-px bg-blue-500"></div>
         </div>
 
         <div
           className="absolute"
-          style={{ bottom: `${neutralPosStart}%`, left: "100%" }}
+          style={{ bottom: `${neutralPosEnd}%`, left: "0%" }}
         >
-          <div className="w-32 h-px bg-blue-500"></div>
-        </div>
-
-        <div
-          className="absolute"
-          style={{ bottom: `${neutralPosEnd}%`, left: "100%" }}
-        >
-          <div className="w-32 h-px bg-blue-500"></div>
+          <div className="w-44 h-px bg-blue-500"></div>
         </div>
 
         <div
           className="absolute"
           style={{
             bottom: `${somewhatBullishPos}%`,
-            left: "100%",
+            left: "0%",
           }}
         >
-          <div className="w-32 h-px bg-blue-500"></div>
+          <div className="w-44 h-px bg-blue-500"></div>
         </div>
       </div>
 
