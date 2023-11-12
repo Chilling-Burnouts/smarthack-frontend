@@ -2,6 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import io from "socket.io-client";
 import * as yup from "yup";
 
 import { Button } from "@src/components/button";
@@ -9,7 +10,6 @@ import { Input } from "@src/components/input";
 import { useAppSelector } from "@src/redux/hooks";
 
 import { ChatMessage } from "../chat-message";
-import { LoadingDots } from "../loading-dots";
 
 import { schema } from "./schema";
 
@@ -23,7 +23,42 @@ export interface IChatMessageProps {
 export const ChatPopup: React.FC<IChatMessageProps> = ({ isOpen, onClose }) => {
   const portfolioState = useAppSelector((state) => state.portfolio);
 
+  const socketRef = useRef<any>(null);
+
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const socket = io(process.env.NEXT_PUBLIC_COSMIN_API_URL!);
+
+    socketRef.current = socket;
+
+    socket.on("message", (item) => {
+      const { message } = item;
+
+      console.log({ message });
+
+      if (message === "") {
+        setConversation((prev) => [...prev, { text: message, isUser: false }]);
+        setLoading(true);
+        return;
+      }
+
+      if (message == null) {
+        setLoading(false);
+        return;
+      }
+
+      setConversation((prev) => {
+        const lastMessage = prev[prev.length - 1];
+
+        lastMessage.text += message;
+
+        return [...prev];
+      });
+
+      scrollToBottom();
+    });
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -42,6 +77,8 @@ export const ChatPopup: React.FC<IChatMessageProps> = ({ isOpen, onClose }) => {
   const [conversation, setConversation] = useState([
     { text: "Hello, how can I help you?", isUser: false },
   ]);
+
+  console.log(conversation);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -79,24 +116,24 @@ export const ChatPopup: React.FC<IChatMessageProps> = ({ isOpen, onClose }) => {
 `;
     }
 
+    if (conversation.length >= 3) {
+      question += `Here is our previous conversation: ${conversation
+        .map((item) => item.text)
+        .join("\n")}`;
+    }
+
     setLoading(true);
     reset();
 
-    const response = await axios.post(
+    await axios.post(
       `${process.env.NEXT_PUBLIC_COSMIN_API_URL}/ask`,
       {
         question,
+      },
+      {
+        responseType: "stream",
       }
     );
-
-    console.log({ response });
-
-    const answer = response.data.answer;
-
-    setConversation((conv) => [...conv, { text: answer, isUser: false }]);
-    scrollToBottom();
-
-    setLoading(false);
   };
 
   return (
@@ -112,7 +149,7 @@ export const ChatPopup: React.FC<IChatMessageProps> = ({ isOpen, onClose }) => {
           <ChatMessage key={index} text={msg.text} isUser={msg.isUser} />
         ))}
 
-        {loading && <LoadingDots />}
+        {/* {loading && <LoadingDots />} */}
 
         <div ref={messagesEndRef} />
       </div>
