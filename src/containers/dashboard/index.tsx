@@ -145,7 +145,7 @@ export const Dashboard: React.FC = () => {
             return (
               <li
                 key={index}
-                className="relative flex items-center p-4 mb-4 rounded-lg shadow-lg overflow-hidden bg-white"
+                className="relative flex items-center p-6 mb-6 rounded-xl shadow-2xl bg-white"
               >
                 <div className="flex-grow">
                   <div className="grid grid-cols-[80%_auto]">
@@ -216,7 +216,7 @@ export const Dashboard: React.FC = () => {
 
                   <div className="flex">
                     {company.news ? (
-                      <div className="mb-4">
+                      <div className="mb-4 mt-4 max-w-5xl">
                         <h3 className="font-semibold text-xl">Latest News:</h3>
                         {company.news.map((item, index) => (
                           <div
@@ -235,15 +235,9 @@ export const Dashboard: React.FC = () => {
                       </div>
                     ) : null}
 
-                    <div
-                      style={{
-                        width: "1200px",
-                        marginRight: "100px",
-                      }}
-                      className=" flex justify-center items-center"
-                    >
+                    <div className="flex flex-1 justify-center items-center">
                       {company.sentiment && company.news ? (
-                        <div className="flex items-center justify-center h-2/5">
+                        <div className="flex items-center justify-center h-4/5">
                           <GradientBar
                             sentimentValue={company.sentiment.value}
                           />

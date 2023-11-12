@@ -29,13 +29,13 @@ export const Sidebar: React.FC = () => {
     <nav className="bg-primary text-white h-screen left-0 top-0 flex flex-col justify-between p-4 shadow-md">
       <div className="flex text-center justify-center flex-col">
         <Link
-          className="text-3xl font-bold hover:text-secondary mb-10 justify-center"
+          className="text-4xl font-bold hover:text-secondary mb-10 justify-center"
           href={authState.isLoggedIn ? "/dashboard" : "/"}
         >
-          InvestraTrack
+          TrendBlend
         </Link>
         {authState.isLoggedIn && (
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4 text-l">
             <Link
               className={`hover:bg-accent hover:text-white hover:shadow-md p-3 my-3 rounded-lg transition-all duration-300 ${isActive(
                 "/dashboard"

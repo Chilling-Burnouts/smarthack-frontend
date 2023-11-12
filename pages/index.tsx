@@ -15,7 +15,7 @@ const LandingPage: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-background text-center">
       <h1 className="text-5xl font-bold text-white mb-6">
-        Welcome to InvestraTrack
+        Welcome to TrendBlend
       </h1>
       <p className="text-white mb-4">
         Your Personal Investment Portfolio Tracker
